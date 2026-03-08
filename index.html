@@ -64,20 +64,6 @@ body {
 </div>
 
 <script>
-
-/* ---------------- SOUND SETUP ---------------- */
-
-// ADD SOUND FOR LETTERS
-const letterSound = new Audio("chalksnap.mp3");
-letterSound.volume = 0.2;
-
-function playLetterSound(){
-  letterSound.currentTime = 0;
-  letterSound.play();
-}
-
-/* --------------------------------------------- */
-
 const lineHeight = 40;
 const stars = [];
 const letters = Array.from(document.querySelectorAll("#welcome span"));
@@ -143,6 +129,13 @@ function updateLetters() {
   });
 }
 
+// Play a new audio instance per hit
+function playLetterSound() {
+  const sound = new Audio("chalksnap.mp3"); // replace with your audio file
+  sound.volume = 0.2;
+  sound.play();
+}
+
 // Check collisions and apply tilt
 function checkCollisions() {
   const letterPos = getLetterPositions();
@@ -152,10 +145,9 @@ function checkCollisions() {
         s.x >= lp.x && s.x <= lp.x + lp.width &&
         s.y >= lp.y && s.y <= lp.y + lp.height
       ) {
-
         letterData[i].velocity += (Math.random() - 0.5) * 0.5;
 
-        // PLAY SOUND WHEN STAR HITS LETTER
+        // Play sound instantly per collision
         playLetterSound();
 
         s.v *= 0.95;
@@ -176,7 +168,6 @@ function updateStars() {
 
   stars.forEach((s, idx) => {
     if (s.y >= window.innerHeight - lineHeight) {
-
       horizontalGlow(s.x, window.innerHeight - lineHeight);
 
       s.star.remove();
