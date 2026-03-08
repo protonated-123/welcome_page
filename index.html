@@ -14,7 +14,7 @@ body {
   justify-content: center;
   align-items: center;
   font-family: 'Kranky', serif;
-  font-display: swap
+  font-display: swap;
 }
 
 /* falling stars */
@@ -69,19 +69,12 @@ body {
 
 // ADD SOUND FOR LETTERS
 const letterSound = new Audio("chalksnap.mp3");
-
-// ADD SOUND FOR STARS
-//Audio for stars removed
-
 letterSound.volume = 0.2;
-//removed
 
 function playLetterSound(){
   letterSound.currentTime = 0;
   letterSound.play();
 }
-
-//removed
 
 /* --------------------------------------------- */
 
@@ -186,9 +179,6 @@ function updateStars() {
 
       horizontalGlow(s.x, window.innerHeight - lineHeight);
 
-      // PLAY SOUND WHEN STAR HITS GLOW LINE
-      playStarSound();
-
       s.star.remove();
       toRemove.push(idx);
     }
@@ -213,4 +203,3 @@ requestAnimationFrame(animate);
 
 </body>
 </html>
-
