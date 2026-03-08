@@ -64,6 +64,36 @@ body {
 </div>
 
 <script>
+/* ---------------- WEB AUDIO SETUP ---------------- */
+
+let audioContext;
+let letterBuffer;
+
+// Load the chalk snap audio
+async function loadLetterAudio() {
+  audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const response = await fetch("chalksnap.mp3"); // ADD SOUND FOR LETTERS
+  const arrayBuffer = await response.arrayBuffer();
+  letterBuffer = await audioContext.decodeAudioData(arrayBuffer);
+}
+
+// Play instantly with no lag
+function playLetterSound() {
+  if (!letterBuffer || !audioContext) return;
+  const source = audioContext.createBufferSource();
+  source.buffer = letterBuffer;
+  source.connect(audioContext.destination);
+  source.start(0);
+}
+
+// Unlock audio on first user interaction
+document.addEventListener("click", async () => {
+  if (!letterBuffer) await loadLetterAudio();
+  if (audioContext.state === "suspended") await audioContext.resume();
+}, { once: true });
+
+/* ---------------- FALLING STARS LOGIC ---------------- */
+
 const lineHeight = 40;
 const stars = [];
 const letters = Array.from(document.querySelectorAll("#welcome span"));
@@ -129,13 +159,6 @@ function updateLetters() {
   });
 }
 
-// Play a new audio instance per hit
-function playLetterSound() {
-  const sound = new Audio("chalksnap.mp3"); // replace with your audio file
-  sound.volume = 0.2;
-  sound.play();
-}
-
 // Check collisions and apply tilt
 function checkCollisions() {
   const letterPos = getLetterPositions();
@@ -147,7 +170,7 @@ function checkCollisions() {
       ) {
         letterData[i].velocity += (Math.random() - 0.5) * 0.5;
 
-        // Play sound instantly per collision
+        // Play sound instantly on collision
         playLetterSound();
 
         s.v *= 0.95;
@@ -169,7 +192,6 @@ function updateStars() {
   stars.forEach((s, idx) => {
     if (s.y >= window.innerHeight - lineHeight) {
       horizontalGlow(s.x, window.innerHeight - lineHeight);
-
       s.star.remove();
       toRemove.push(idx);
     }
