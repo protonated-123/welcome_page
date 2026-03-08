@@ -64,40 +64,19 @@ body {
 </div>
 
 <script>
-/* ---------------- WEB AUDIO SETUP FOR LETTER HIT ---------------- */
 
-let audioContext;
-let letterBuffer;
+/* ---------------- SOUND SETUP ---------------- */
 
-// Initialize Web Audio and load the audio file
-async function initAudio() {
-  audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  const response = await fetch("chalksnap.mp3"); // replace with your audio file
-  const arrayBuffer = await response.arrayBuffer();
-  letterBuffer = await audioContext.decodeAudioData(arrayBuffer);
+// ADD SOUND FOR LETTERS
+const letterSound = new Audio("chalksnap.mp3");
+letterSound.volume = 0.2;
+
+function playLetterSound(){
+  letterSound.currentTime = 0;
+  letterSound.play();
 }
 
-// Play the letter hit sound instantly
-function playLetterSound() {
-  if (!letterBuffer || !audioContext) return;
-
-  const source = audioContext.createBufferSource();
-  source.buffer = letterBuffer;
-  source.connect(audioContext.destination);
-  source.start(0); // plays immediately
-}
-
-// Unlock audio on first user interaction (required by browsers)
-document.addEventListener("click", async () => {
-  if (!audioContext) {
-    await initAudio();
-  }
-  if (audioContext.state === "suspended") {
-    audioContext.resume();
-  }
-}, { once: true });
-
-/* ------------------------------------------------------------------ */
+/* --------------------------------------------- */
 
 const lineHeight = 40;
 const stars = [];
@@ -173,6 +152,7 @@ function checkCollisions() {
         s.x >= lp.x && s.x <= lp.x + lp.width &&
         s.y >= lp.y && s.y <= lp.y + lp.height
       ) {
+
         letterData[i].velocity += (Math.random() - 0.5) * 0.5;
 
         // PLAY SOUND WHEN STAR HITS LETTER
