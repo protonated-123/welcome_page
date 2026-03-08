@@ -64,33 +64,27 @@ body {
 </div>
 
 <script>
-/* ---------------- WEB AUDIO SETUP ---------------- */
+/* ---------------- AUDIO POOL SETUP ---------------- */
 
-let audioContext;
-let letterBuffer;
+// Number of audio instances in the pool
+const POOL_SIZE = 8;
+const audioPool = [];
+let poolIndex = 0;
 
-// Load the chalk snap audio
-async function loadLetterAudio() {
-  audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  const response = await fetch("chalksnap.wav"); // ADD SOUND FOR LETTERS
-  const arrayBuffer = await response.arrayBuffer();
-  letterBuffer = await audioContext.decodeAudioData(arrayBuffer);
+// Preload audio elements
+for (let i = 0; i < POOL_SIZE; i++) {
+  const audio = new Audio("chalksnap.mp3"); // ADD SOUND FOR LETTERS
+  audio.volume = 0.2;
+  audioPool.push(audio);
 }
 
-// Play instantly with no lag
+// Play the next available audio in the pool
 function playLetterSound() {
-  if (!letterBuffer || !audioContext) return;
-  const source = audioContext.createBufferSource();
-  source.buffer = letterBuffer;
-  source.connect(audioContext.destination);
-  source.start(0);
+  const audio = audioPool[poolIndex];
+  audio.currentTime = 0;
+  audio.play();
+  poolIndex = (poolIndex + 1) % POOL_SIZE;
 }
-
-// Unlock audio on first user interaction
-document.addEventListener("click", async () => {
-  if (!letterBuffer) await loadLetterAudio();
-  if (audioContext.state === "suspended") await audioContext.resume();
-}, { once: true });
 
 /* ---------------- FALLING STARS LOGIC ---------------- */
 
@@ -170,7 +164,7 @@ function checkCollisions() {
       ) {
         letterData[i].velocity += (Math.random() - 0.5) * 0.5;
 
-        // Play sound instantly on collision
+        // Play sound instantly using the audio pool
         playLetterSound();
 
         s.v *= 0.95;
@@ -216,4 +210,3 @@ requestAnimationFrame(animate);
 
 </body>
 </html>
-
