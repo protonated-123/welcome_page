@@ -72,7 +72,7 @@ let letterBuffer;
 // Load the chalk snap audio
 async function loadLetterAudio() {
   audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  const response = await fetch("chalksnap.mp3"); // ADD SOUND FOR LETTERS
+  const response = await fetch("chalksnap.wav"); // ADD SOUND FOR LETTERS
   const arrayBuffer = await response.arrayBuffer();
   letterBuffer = await audioContext.decodeAudioData(arrayBuffer);
 }
@@ -216,3 +216,4 @@ requestAnimationFrame(animate);
 
 </body>
 </html>
+
