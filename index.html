@@ -71,20 +71,17 @@ body {
 const letterSound = new Audio("chalksnap.mp3");
 
 // ADD SOUND FOR STARS
-const starSound = new Audio("waterdrop.mp3");
+//Audio for stars removed
 
 letterSound.volume = 0.2;
-starSound.volume = 0.2;
+//removed
 
 function playLetterSound(){
   letterSound.currentTime = 0;
   letterSound.play();
 }
 
-function playStarSound(){
-  starSound.currentTime = 0;
-  starSound.play();
-}
+//removed
 
 /* --------------------------------------------- */
 
@@ -216,3 +213,4 @@ requestAnimationFrame(animate);
 
 </body>
 </html>
+
